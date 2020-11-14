@@ -36,6 +36,7 @@ class Subject extends \yii\db\ActiveRecord
             [['otdel_id', 'hours', 'active'], 'integer'],
             [['name'], 'string', 'max' => 50],
             [['otdel_id'], 'exist', 'skipOnError' => true, 'targetClass' => Otdel::className(), 'targetAttribute' => ['otdel_id' => 'otdel_id']],
+            [['subject_id'], 'unique', 'targetClass' => Subject::className(), 'message' => 'Предмет успешно добавлен'],
         ];
     }
 
@@ -72,4 +73,26 @@ class Subject extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Otdel::className(), ['otdel_id' => 'otdel_id']);
     }
+    
+    public static function find()
+    {
+        return new \app\models\queries\UserQuery(get_called_class());
+    }
+    
+    public function loadAndSave($bodyParams)
+    {
+        $subject = ($this->isNewRecord) ? new Subject() : Subject::findOne($this->subject_id);
+        if ($subject->load($bodyParams, '') && $subject->save()) {
+            if ($this->isNewRecord) {
+                $this->subject_id = $subject->subject_id;
+            }
+            if ($this->load($bodyParams, '') && $this->save()) {
+                return true;
+            }
 }
+
+        return false;
+
+    }
+}
+
