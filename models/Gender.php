@@ -53,5 +53,4 @@ class Gender extends \yii\db\ActiveRecord
     {
         return $this->hasMany(User::className(), ['gender_id' => 'gender_id']);
     }
-
 }
